@@ -12,7 +12,12 @@ services:
       - key: DEBUG
         value: False
       - key: ALLOWED_HOSTS
+<<<<<<< HEAD
         value: "portfolio-b39z.onrender.com"  # Remove https:// and trailing slash
+=======
+        value: "your-app-name.onrender.com"
+        value: "https://portfolio-b39z.onrender.com"
+>>>>>>> 2e31f6f1b881aa0108032645a1966f5f04f7663b
       - key: PORT
         value: 8000
     autoDeploy: true
