@@ -12,7 +12,7 @@ services:
       - key: DEBUG
         value: False
       - key: ALLOWED_HOSTS
-        value: "portfolio-abc123.onrender.com"  # Replace with your actual URL
+        value: "https://portfolio-b39z.onrender.com"  # Replace with your actual URL
       - key: PORT
         value: 8000
     autoDeploy: true
