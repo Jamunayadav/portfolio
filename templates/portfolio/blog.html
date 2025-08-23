@@ -1,0 +1,314 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Blog - Jamuna Yadav{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<section class="bg-gradient-primary text-white py-5" style="padding-top: 120px !important;">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h1 class="display-4 fw-bold mb-3">Blog</h1>
+                <p class="lead">Thoughts, insights, and technical articles</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Search Section -->
+<section class="py-4 bg-light">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 mx-auto">
+                <form method="GET" class="search-form">
+                    <div class="input-group">
+                        <input type="text" 
+                               class="form-control form-control-lg" 
+                               name="search" 
+                               id="blog-search"
+                               placeholder="Search blog posts..."
+                               value="{{ search_query }}">
+                        <button class="btn btn-primary" type="submit">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Blog Posts -->
+<section class="py-5">
+    <div class="container">
+        {% if search_query %}
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="alert alert-info">
+                    <i class="fas fa-search me-2"></i>
+                    Search results for: <strong>"{{ search_query }}"</strong>
+                    <a href="{% url 'portfolio:blog' %}" class="btn btn-sm btn-outline-info ms-3">
+                        <i class="fas fa-times me-1"></i>Clear Search
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        {% if posts %}
+        <div class="row">
+            {% for post in posts %}
+            <div class="col-lg-6 col-md-6 mb-4">
+                <div class="blog-card card h-100 shadow-sm">
+                    {% if post.image %}
+                        <img src="{{ post.image.url }}" class="card-img-top" alt="{{ post.title }}">
+                    {% else %}
+                        <div class="card-img-top bg-secondary d-flex align-items-center justify-content-center" style="height: 200px;">
+                            <i class="fas fa-blog fa-3x text-light"></i>
+                        </div>
+                    {% endif %}
+                    
+                    <div class="card-body">
+                        <div class="blog-meta mb-2">
+                            <small class="text-muted">
+                                <i class="fas fa-calendar me-1"></i>
+                                {{ post.created_at|date:"M d, Y" }}
+                            </small>
+                        </div>
+                        
+                        <h5 class="card-title">{{ post.title }}</h5>
+                        
+                        {% if post.excerpt %}
+                            <p class="card-text">{{ post.excerpt }}</p>
+                        {% else %}
+                            <p class="card-text">{{ post.content|truncatewords:30 }}</p>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="card-footer bg-transparent">
+                        <a href="{% url 'portfolio:blog_detail' post.slug %}" class="btn btn-primary btn-sm">
+                            <i class="fas fa-readme me-1"></i>Read More
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Pagination -->
+        {% if posts.has_other_pages %}
+        <div class="row">
+            <div class="col-12">
+                <nav aria-label="Blog pagination">
+                    <ul class="pagination justify-content-center">
+                        {% if posts.has_previous %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page=1{% if search_query %}&search={{ search_query }}{% endif %}">
+                                    <i class="fas fa-angle-double-left"></i>
+                                </a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ posts.previous_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}">
+                                    <i class="fas fa-angle-left"></i>
+                                </a>
+                            </li>
+                        {% endif %}
+
+                        {% for num in posts.paginator.page_range %}
+                            {% if posts.number == num %}
+                                <li class="page-item active">
+                                    <span class="page-link">{{ num }}</span>
+                                </li>
+                            {% elif num > posts.number|add:'-3' and num < posts.number|add:'3' %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ num }}{% if search_query %}&search={{ search_query }}{% endif %}">{{ num }}</a>
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+
+                        {% if posts.has_next %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ posts.next_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}">
+                                    <i class="fas fa-angle-right"></i>
+                                </a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ posts.paginator.num_pages }}{% if search_query %}&search={{ search_query }}{% endif %}">
+                                    <i class="fas fa-angle-double-right"></i>
+                                </a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+            </div>
+        </div>
+        {% endif %}
+
+        {% else %}
+        <div class="row">
+            <div class="col-12 text-center">
+                <div class="empty-state">
+                    <i class="fas fa-newspaper fa-4x text-muted mb-4"></i>
+                    <h3 class="text-muted mb-3">
+                        {% if search_query %}
+                            No blog posts found matching "{{ search_query }}"
+                        {% else %}
+                            No blog posts available yet
+                        {% endif %}
+                    </h3>
+                    <p class="text-muted mb-4">
+                        {% if search_query %}
+                            Try adjusting your search terms or browse all posts.
+                        {% else %}
+                            Blog posts will be displayed here once they are published.
+                        {% endif %}
+                    </p>
+                    {% if search_query %}
+                        <a href="{% url 'portfolio:blog' %}" class="btn btn-primary">
+                            <i class="fas fa-arrow-left me-2"></i>View All Posts
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+<!-- Call to Action -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 mx-auto text-center">
+                <h2 class="mb-4">Stay Updated</h2>
+                <p class="lead mb-4">
+                    I regularly write about data engineering, technology trends, and best practices. 
+                    Subscribe to stay updated with the latest insights and tutorials.
+                </p>
+                <a href="{% url 'portfolio:contact' %}" class="btn btn-primary btn-lg me-3">
+                    <i class="fas fa-envelope me-2"></i>Get In Touch
+                </a>
+                <a href="{% url 'portfolio:projects' %}" class="btn btn-outline-primary btn-lg">
+                    <i class="fas fa-code me-2"></i>View My Work
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+/* Blog Card Styling */
+.blog-card {
+    transition: all 0.3s ease;
+    border: none;
+    overflow: hidden;
+}
+
+.blog-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-lg);
+}
+
+.blog-card .card-img-top {
+    transition: transform 0.3s ease;
+}
+
+.blog-card:hover .card-img-top {
+    transform: scale(1.05);
+}
+
+.blog-meta {
+    font-size: 0.875rem;
+}
+
+/* Search Form Styling */
+.search-form .form-control {
+    border-radius: 8px 0 0 8px;
+    border: 2px solid #e9ecef;
+    padding: 0.75rem 1rem;
+}
+
+.search-form .btn {
+    border-radius: 0 8px 8px 0;
+    border: 2px solid var(--primary-color);
+    padding: 0.75rem 1.5rem;
+}
+
+/* Empty State Styling */
+.empty-state {
+    padding: 4rem 2rem;
+}
+
+.empty-state i {
+    opacity: 0.5;
+}
+
+/* Pagination Styling */
+.pagination .page-link {
+    border-radius: 6px;
+    margin: 0 0.25rem;
+    border: 1px solid #e9ecef;
+    color: var(--primary-color);
+    transition: all 0.3s ease;
+}
+
+.pagination .page-link:hover {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+    color: white;
+    transform: translateY(-2px);
+}
+
+.pagination .page-item.active .page-link {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .search-form .input-group {
+        flex-direction: column;
+    }
+    
+    .search-form .form-control,
+    .search-form .btn {
+        border-radius: 8px;
+        margin-bottom: 0.5rem;
+    }
+}
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Initialize blog search functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('blog-search');
+    const blogCards = document.querySelectorAll('.blog-card');
+    
+    if (searchInput) {
+        searchInput.addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            
+            blogCards.forEach(card => {
+                const title = card.querySelector('.card-title').textContent.toLowerCase();
+                const excerpt = card.querySelector('.card-text').textContent.toLowerCase();
+                
+                const matches = title.includes(searchTerm) || excerpt.includes(searchTerm);
+                
+                if (matches) {
+                    card.style.display = 'block';
+                    card.classList.add('animate-fade-in-up');
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
+    }
+});
+</script>
+{% endblock %}
+

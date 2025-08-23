@@ -1,0 +1,365 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Projects - Jamuna Yadav{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<section class="bg-gradient-primary text-white py-5" style="padding-top: 120px !important;">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h1 class="display-4 fw-bold mb-3">My Projects</h1>
+                <p class="lead">Explore my work and technical solutions</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Search and Filter Section -->
+<section class="py-4 bg-light">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 mx-auto">
+                <form method="GET" class="search-form">
+                    <div class="input-group">
+                        <input type="text" 
+                               class="form-control form-control-lg" 
+                               name="search" 
+                               id="project-search"
+                               placeholder="Search projects by title, description, or technologies..."
+                               value="{{ search_query }}">
+                        <button class="btn btn-primary" type="submit">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Projects Grid -->
+<section class="py-5">
+    <div class="container">
+        {% if search_query %}
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="alert alert-info">
+                    <i class="fas fa-search me-2"></i>
+                    Search results for: <strong>"{{ search_query }}"</strong>
+                    <a href="{% url 'portfolio:projects' %}" class="btn btn-sm btn-outline-info ms-3">
+                        <i class="fas fa-times me-1"></i>Clear Search
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        {% if projects %}
+        <div class="row">
+            {% for project in projects %}
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="project-card card h-100 shadow-sm">
+                    {% if project.image %}
+                        <img src="{{ project.image.url }}" class="card-img-top" alt="{{ project.title }}">
+                    {% else %}
+                        <div class="card-img-top bg-secondary d-flex align-items-center justify-content-center" style="height: 200px;">
+                            <i class="fas fa-project-diagram fa-3x text-light"></i>
+                        </div>
+                    {% endif %}
+                    
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <h5 class="card-title mb-1">{{ project.title }}</h5>
+                            {% if project.featured %}
+                                <span class="badge bg-warning text-dark">
+                                    <i class="fas fa-star me-1"></i>Featured
+                                </span>
+                            {% endif %}
+                        </div>
+                        
+                        <p class="card-text text-muted">{{ project.short_description }}</p>
+                        
+                        <div class="project-tech mb-3">
+                            {% for tech in project.technologies.all %}
+                                <span class="badge bg-primary me-1 mb-1">{{ tech.name }}</span>
+                            {% endfor %}
+                        </div>
+                        
+                        <div class="project-meta text-muted small mb-3">
+                            <i class="fas fa-calendar me-1"></i>
+                            Created: {{ project.created_at|date:"M Y" }}
+                        </div>
+                    </div>
+                    
+                    <div class="card-footer bg-transparent">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <a href="{% url 'portfolio:project_detail' project.id %}" class="btn btn-primary btn-sm">
+                                <i class="fas fa-eye me-1"></i>View Details
+                            </a>
+                            <div class="project-links">
+                                {% if project.github_url %}
+                                    <a href="{{ project.github_url }}" class="btn btn-outline-secondary btn-sm" target="_blank" title="View Code">
+                                        <i class="fab fa-github"></i>
+                                    </a>
+                                {% endif %}
+                                {% if project.live_url %}
+                                    <a href="{{ project.live_url }}" class="btn btn-outline-success btn-sm" target="_blank" title="Live Demo">
+                                        <i class="fas fa-external-link-alt"></i>
+                                    </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Pagination -->
+        {% if projects.has_other_pages %}
+        <div class="row">
+            <div class="col-12">
+                <nav aria-label="Projects pagination">
+                    <ul class="pagination justify-content-center">
+                        {% if projects.has_previous %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page=1{% if search_query %}&search={{ search_query }}{% endif %}">
+                                    <i class="fas fa-angle-double-left"></i>
+                                </a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ projects.previous_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}">
+                                    <i class="fas fa-angle-left"></i>
+                                </a>
+                            </li>
+                        {% endif %}
+
+                        {% for num in projects.paginator.page_range %}
+                            {% if projects.number == num %}
+                                <li class="page-item active">
+                                    <span class="page-link">{{ num }}</span>
+                                </li>
+                            {% elif num > projects.number|add:'-3' and num < projects.number|add:'3' %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ num }}{% if search_query %}&search={{ search_query }}{% endif %}">{{ num }}</a>
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+
+                        {% if projects.has_next %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ projects.next_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}">
+                                    <i class="fas fa-angle-right"></i>
+                                </a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ projects.paginator.num_pages }}{% if search_query %}&search={{ search_query }}{% endif %}">
+                                    <i class="fas fa-angle-double-right"></i>
+                                </a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+            </div>
+        </div>
+        {% endif %}
+
+        {% else %}
+        <div class="row">
+            <div class="col-12 text-center">
+                <div class="empty-state">
+                    <i class="fas fa-folder-open fa-4x text-muted mb-4"></i>
+                    <h3 class="text-muted mb-3">
+                        {% if search_query %}
+                            No projects found matching "{{ search_query }}"
+                        {% else %}
+                            No projects available yet
+                        {% endif %}
+                    </h3>
+                    <p class="text-muted mb-4">
+                        {% if search_query %}
+                            Try adjusting your search terms or browse all projects.
+                        {% else %}
+                            Projects will be displayed here once they are added to the portfolio.
+                        {% endif %}
+                    </p>
+                    {% if search_query %}
+                        <a href="{% url 'portfolio:projects' %}" class="btn btn-primary">
+                            <i class="fas fa-arrow-left me-2"></i>View All Projects
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+<!-- Call to Action -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 mx-auto text-center">
+                <h2 class="mb-4">Interested in My Work?</h2>
+                <p class="lead mb-4">
+                    I'm always open to discussing new projects, collaborations, and opportunities. 
+                    Let's work together to bring your ideas to life!
+                </p>
+                <a href="{% url 'portfolio:contact' %}" class="btn btn-primary btn-lg me-3">
+                    <i class="fas fa-envelope me-2"></i>Get In Touch
+                </a>
+                <a href="{% url 'portfolio:about' %}" class="btn btn-outline-primary btn-lg">
+                    <i class="fas fa-user me-2"></i>Learn More About Me
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+/* Project Card Enhancements */
+.project-card {
+    transition: all 0.3s ease;
+    border: none;
+    overflow: hidden;
+}
+
+.project-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.175) !important;
+}
+
+.project-card .card-img-top {
+    transition: transform 0.3s ease;
+}
+
+.project-card:hover .card-img-top {
+    transform: scale(1.05);
+}
+
+.project-tech .badge {
+    font-size: 0.75rem;
+    padding: 0.5rem 0.75rem;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+}
+
+.project-tech .badge:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.15);
+}
+
+.project-links .btn {
+    margin-left: 0.25rem;
+    transition: all 0.3s ease;
+}
+
+.project-links .btn:hover {
+    transform: translateY(-2px);
+}
+
+/* Search Form Styling */
+.search-form .form-control {
+    border-radius: 8px 0 0 8px;
+    border: 2px solid #e9ecef;
+    padding: 0.75rem 1rem;
+}
+
+.search-form .btn {
+    border-radius: 0 8px 8px 0;
+    border: 2px solid var(--primary-color);
+    padding: 0.75rem 1.5rem;
+}
+
+/* Empty State Styling */
+.empty-state {
+    padding: 4rem 2rem;
+}
+
+.empty-state i {
+    opacity: 0.5;
+}
+
+/* Pagination Styling */
+.pagination .page-link {
+    border-radius: 6px;
+    margin: 0 0.25rem;
+    border: 1px solid #e9ecef;
+    color: var(--primary-color);
+    transition: all 0.3s ease;
+}
+
+.pagination .page-link:hover {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+    color: white;
+    transform: translateY(-2px);
+}
+
+.pagination .page-item.active .page-link {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .project-card .card-footer {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .project-links {
+        display: flex;
+        gap: 0.5rem;
+    }
+    
+    .search-form .input-group {
+        flex-direction: column;
+    }
+    
+    .search-form .form-control,
+    .search-form .btn {
+        border-radius: 8px;
+        margin-bottom: 0.5rem;
+    }
+}
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Initialize project search functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('project-search');
+    const projectCards = document.querySelectorAll('.project-card');
+    
+    if (searchInput) {
+        searchInput.addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            
+            projectCards.forEach(card => {
+                const title = card.querySelector('.card-title').textContent.toLowerCase();
+                const description = card.querySelector('.card-text').textContent.toLowerCase();
+                const technologies = Array.from(card.querySelectorAll('.badge')).map(badge => badge.textContent.toLowerCase());
+                
+                const matches = title.includes(searchTerm) || 
+                              description.includes(searchTerm) || 
+                              technologies.some(tech => tech.includes(searchTerm));
+                
+                if (matches) {
+                    card.style.display = 'block';
+                    card.classList.add('animate-fade-in-up');
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
+    }
+});
+</script>
+{% endblock %}
+

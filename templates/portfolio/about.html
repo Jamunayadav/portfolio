@@ -1,0 +1,375 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}About - Jamuna Yadav{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<section class="bg-gradient-primary text-white py-5" style="padding-top: 120px !important;">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h1 class="display-4 fw-bold mb-3">About Me</h1>
+                <p class="lead">Get to know me better</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- About Content -->
+<section class="py-5">
+    <div class="container">
+        <div class="row">
+            <!-- Personal Information -->
+            <div class="col-lg-8">
+                <div class="about-content">
+                    <h2 class="section-title mb-4">Who I Am</h2>
+                    <div class="row">
+                        <div class="col-md-4 mb-4">
+                            {% if personal_info and personal_info.profile_picture %}
+                                <img src="{{ personal_info.profile_picture.url }}" alt="Jamuna Yadav" class="img-fluid rounded">
+                            {% else %}
+                                <div class="bg-secondary rounded d-flex align-items-center justify-content-center" style="height: 250px;">
+                                    <i class="fas fa-user-circle fa-5x text-light"></i>
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-8">
+                            {% if personal_info %}
+                                <p class="lead mb-3">{{ personal_info.about_me }}</p>
+                                <div class="personal-details">
+                                    <div class="row">
+                                        <div class="col-sm-6">
+                                            <p><strong><i class="fas fa-envelope me-2 text-primary"></i>Email:</strong><br>
+                                            <a href="mailto:{{ personal_info.email }}">{{ personal_info.email }}</a></p>
+                                        </div>
+                                        {% if personal_info.phone %}
+                                        <div class="col-sm-6">
+                                            <p><strong><i class="fas fa-phone me-2 text-primary"></i>Phone:</strong><br>
+                                            <a href="tel:{{ personal_info.phone }}">{{ personal_info.phone }}</a></p>
+                                        </div>
+                                        {% endif %}
+                                        {% if personal_info.location %}
+                                        <div class="col-sm-6">
+                                            <p><strong><i class="fas fa-map-marker-alt me-2 text-primary"></i>Location:</strong><br>
+                                            {{ personal_info.location }}</p>
+                                        </div>
+                                        {% endif %}
+                                        {% if personal_info.linkedin %}
+                                        <div class="col-sm-6">
+                                            <p><strong><i class="fab fa-linkedin me-2 text-primary"></i>LinkedIn:</strong><br>
+                                            <a href="{{ personal_info.linkedin }}" target="_blank">Connect with me</a></p>
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            {% else %}
+                                <p class="lead mb-3">
+                                    I am a passionate Data Engineer with a strong foundation in data architecture, 
+                                    pipeline development, and cloud technologies. My expertise lies in building 
+                                    scalable data solutions that transform complex business challenges into 
+                                    streamlined, efficient processes.
+                                </p>
+                                <p>
+                                    With years of experience in the data engineering field, I have successfully 
+                                    designed and implemented data pipelines, ETL processes, and data warehousing 
+                                    solutions for various industries. I am committed to staying current with 
+                                    the latest technologies and best practices in the rapidly evolving data landscape.
+                                </p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Quick Stats -->
+            <div class="col-lg-4">
+                <div class="quick-stats">
+                    <h3 class="h5 mb-4">Quick Stats</h3>
+                    <div class="stat-item mb-3">
+                        <div class="d-flex justify-content-between">
+                            <span>Years of Experience</span>
+                            <span class="fw-bold text-primary">5+</span>
+                        </div>
+                    </div>
+                    <div class="stat-item mb-3">
+                        <div class="d-flex justify-content-between">
+                            <span>Projects Completed</span>
+                            <span class="fw-bold text-primary">{{ projects.count|default:"20+" }}</span>
+                        </div>
+                    </div>
+                    <div class="stat-item mb-3">
+                        <div class="d-flex justify-content-between">
+                            <span>Technologies</span>
+                            <span class="fw-bold text-primary">{{ skills.count|default:"15+" }}</span>
+                        </div>
+                    </div>
+                    <div class="stat-item mb-3">
+                        <div class="d-flex justify-content-between">
+                            <span>Certifications</span>
+                            <span class="fw-bold text-primary">{{ certifications.count|default:"8+" }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Experience Timeline -->
+{% if experiences %}
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 text-center mb-5">
+                <h2 class="section-title">Professional Experience</h2>
+                <p class="text-muted">My career journey</p>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-12">
+                <div class="timeline">
+                    {% for experience in experiences %}
+                    <div class="timeline-item">
+                        <div class="timeline-marker"></div>
+                        <div class="timeline-content">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-start mb-3">
+                                        <div>
+                                            <h5 class="card-title mb-1">{{ experience.position }}</h5>
+                                            <h6 class="text-primary mb-1">{{ experience.company }}</h6>
+                                            {% if experience.location %}
+                                                <small class="text-muted"><i class="fas fa-map-marker-alt me-1"></i>{{ experience.location }}</small>
+                                            {% endif %}
+                                        </div>
+                                        <div class="text-end">
+                                            <span class="badge bg-primary">
+                                                {{ experience.start_date|date:"M Y" }} - 
+                                                {% if experience.current %}Present{% else %}{{ experience.end_date|date:"M Y" }}{% endif %}
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <p class="card-text">{{ experience.description }}</p>
+                                    {% if experience.achievements %}
+                                        <div class="achievements mt-3">
+                                            <h6 class="text-muted">Key Achievements:</h6>
+                                            <p class="small">{{ experience.achievements }}</p>
+                                        </div>
+                                    {% endif %}
+                                    {% if experience.technologies_used.all %}
+                                        <div class="technologies mt-3">
+                                            <h6 class="text-muted">Technologies Used:</h6>
+                                            {% for tech in experience.technologies_used.all %}
+                                                <span class="badge bg-secondary me-1">{{ tech.name }}</span>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- Education -->
+{% if education %}
+<section class="py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 text-center mb-5">
+                <h2 class="section-title">Education</h2>
+                <p class="text-muted">My academic background</p>
+            </div>
+        </div>
+        
+        <div class="row">
+            {% for edu in education %}
+            <div class="col-lg-6 mb-4">
+                <div class="education-card card h-100">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <div>
+                                <h5 class="card-title mb-1">{{ edu.degree }}</h5>
+                                <h6 class="text-primary mb-1">{{ edu.institution }}</h6>
+                                <p class="text-muted mb-2">{{ edu.field_of_study }}</p>
+                            </div>
+                            <span class="badge bg-success">
+                                {{ edu.start_date|date:"M Y" }} - 
+                                {% if edu.current %}Present{% else %}{{ edu.end_date|date:"M Y" }}{% endif %}
+                            </span>
+                        </div>
+                        {% if edu.gpa %}
+                            <p class="mb-2"><strong>GPA:</strong> {{ edu.gpa }}/4.0</p>
+                        {% endif %}
+                        {% if edu.description %}
+                            <p class="card-text small">{{ edu.description }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- Certifications -->
+{% if certifications %}
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 text-center mb-5">
+                <h2 class="section-title">Certifications</h2>
+                <p class="text-muted">Professional certifications and achievements</p>
+            </div>
+        </div>
+        
+        <div class="row">
+            {% for cert in certifications %}
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="certification-card card h-100">
+                    {% if cert.image %}
+                        <img src="{{ cert.image.url }}" class="card-img-top" alt="{{ cert.name }}">
+                    {% else %}
+                        <div class="card-img-top bg-secondary d-flex align-items-center justify-content-center" style="height: 150px;">
+                            <i class="fas fa-certificate fa-3x text-light"></i>
+                        </div>
+                    {% endif %}
+                    <div class="card-body">
+                        <h5 class="card-title">{{ cert.name }}</h5>
+                        <h6 class="text-primary mb-2">{{ cert.issuing_organization }}</h6>
+                        <p class="text-muted small mb-2">
+                            <i class="fas fa-calendar me-1"></i>
+                            Issued: {{ cert.issue_date|date:"M Y" }}
+                            {% if cert.expiry_date %}
+                                <br><i class="fas fa-clock me-1"></i>
+                                Expires: {{ cert.expiry_date|date:"M Y" }}
+                            {% endif %}
+                        </p>
+                        {% if cert.credential_id %}
+                            <p class="small mb-2"><strong>Credential ID:</strong> {{ cert.credential_id }}</p>
+                        {% endif %}
+                    </div>
+                    <div class="card-footer bg-transparent">
+                        {% if cert.credential_url %}
+                            <a href="{{ cert.credential_url }}" class="btn btn-primary btn-sm" target="_blank">
+                                <i class="fas fa-external-link-alt me-1"></i>Verify
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- Call to Action -->
+<section class="py-5 bg-primary text-white">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 mx-auto text-center">
+                <h2 class="mb-4">Interested in Working Together?</h2>
+                <p class="lead mb-4">
+                    I'm always open to discussing new opportunities, interesting projects, 
+                    and potential collaborations. Let's connect!
+                </p>
+                <a href="{% url 'portfolio:contact' %}" class="btn btn-warning btn-lg me-3">
+                    <i class="fas fa-envelope me-2"></i>Get In Touch
+                </a>
+                <a href="{% url 'portfolio:projects' %}" class="btn btn-outline-light btn-lg">
+                    <i class="fas fa-code me-2"></i>View My Work
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+/* Timeline Styles */
+.timeline {
+    position: relative;
+    padding-left: 30px;
+}
+
+.timeline::before {
+    content: '';
+    position: absolute;
+    left: 15px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: var(--primary-color);
+}
+
+.timeline-item {
+    position: relative;
+    margin-bottom: 30px;
+}
+
+.timeline-marker {
+    position: absolute;
+    left: -22px;
+    top: 20px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--primary-color);
+    border: 3px solid white;
+    box-shadow: 0 0 0 3px var(--primary-color);
+}
+
+.timeline-content {
+    margin-left: 20px;
+}
+
+/* Education Card Styles */
+.education-card {
+    transition: all 0.3s ease;
+}
+
+.education-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-lg);
+}
+
+/* Certification Card Styles */
+.certification-card {
+    transition: all 0.3s ease;
+}
+
+.certification-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-lg);
+}
+
+/* Quick Stats Styles */
+.quick-stats {
+    background: white;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid #e9ecef;
+}
+
+.stat-item {
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.stat-item:last-child {
+    border-bottom: none;
+}
+</style>
+{% endblock %}
+
