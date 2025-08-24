@@ -127,7 +127,8 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 # Add this for production security - ONLY when DEBUG is False
 if not DEBUG:
-    SECURE_SSL_REDIRECT = True
+    # Comment out or remove the SSL redirect for now
+    # SECURE_SSL_REDIRECT = True  # Comment this out
     SECURE_HSTS_SECONDS = 31536000
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
     SECURE_HSTS_PRELOAD = True
