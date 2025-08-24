@@ -125,10 +125,12 @@ STATICFILES_DIRS = [
 ]
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
-# Add this for production security - ONLY when DEBUG is False
+# Add this for production static files:
 if not DEBUG:
-    # Comment out or remove the SSL redirect for now
-    # SECURE_SSL_REDIRECT = True  # Comment this out
+    # Production static files configuration
+    STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
+    # Remove SSL redirect for now
+    # SECURE_SSL_REDIRECT = True
     SECURE_HSTS_SECONDS = 31536000
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
     SECURE_HSTS_PRELOAD = True
